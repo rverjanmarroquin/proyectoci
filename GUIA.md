@@ -61,7 +61,7 @@ La primera ejecucion descarga muchas imagenes (10-15 min). Las siguientes toman 
 ## 7. Simulacion de fallos (para la evidencia del documento)
 **a) Falla de pruebas unitarias.** En `src/reservasService.js`, en `seSolapan`, cambia `< DURACION_MIN` por `<= DURACION_MIN`. Haz commit y push: Jest falla en la etapa 4, las etapas siguientes se omiten (no hay despliegue). Corrige, vuelve a subir y pasa a verde.
 
-**b) Secreto expuesto (Gitleaks).** Agrega a cualquier archivo `.js` la linea `const token = "ghp_aBcDeFgHiJkLmNoPqRsTuVwXyZ0123456789";` y haz push: falla en la etapa 1. Eliminala y sube de nuevo.
+**b) Secreto expuesto (Gitleaks).** Agrega a cualquier archivo `.js` una variable que contenga un token falso con formato de GitHub: las letras ghp, un guion bajo y 36 letras y números mezclados. Haz push: falla en la etapa 1. Elimínalo y sube de nuevo.
 
 **c) Rollback en produccion.** Primero deja un build bueno desplegado en prod. Luego, en `src/app.js`, dentro de la ruta `/health`, agrega como primera linea: `if (process.env.ENV_NAME === 'prod') return res.status(503).json({ status: 'error' });` (la app recibe `ENV_NAME` desde el compose). Haz push: staging y todas las pruebas pasan, pero el smoke test de produccion falla y en el log veras `ROLLBACK de prod`; produccion vuelve a la version anterior. Despues quita la linea para dejar todo en verde.
 
