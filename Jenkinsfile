@@ -105,15 +105,20 @@ pipeline {
         '''
         // Seguridad dinamica: OWASP ZAP baseline (0 = ok, 2 = solo advertencias, 1 = fallo)
         sh '''
-          docker rm -f zap-run >/dev/null 2>&1 || true
+          docker rm -f zap-run || true
+          docker volume rm -f zap-wrk || true
+          docker volume create zap-wrk
           set +e
-          docker run --name zap-run --network cicd-net ghcr.io/zaproxy/zaproxy:stable \
-            zap-baseline.py -t http://restaurante-staging-app:3000 -r zap-report.html
+          docker run --name zap-run --network cicd-net -u root -v zap-wrk:/zap/wrk:rw \
+          ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
+          -t http://restaurante-staging-app:3000 -r zap-report.html
           CODE=$?
           docker cp zap-run:/zap/wrk/zap-report.html reports/zap-report.html || true
-          docker rm -f zap-run >/dev/null 2>&1
-          if [ $CODE -eq 0 ] || [ $CODE -eq 2 ]; then exit 0; else exit 1; fi
-        '''
+          set -e
+          docker rm -f zap-run || true
+          docker volume rm -f zap-wrk || true
+          [ $CODE -eq 0 ] || [ $CODE -eq 2 ] || exit 1
+          '''
       }
     }
 
