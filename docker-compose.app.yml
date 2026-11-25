@@ -1,0 +1,41 @@
+# Despliega la aplicacion + PostgreSQL. Se usa para staging, produccion y local.
+# Variables: ENV_NAME (staging|prod|local), IMAGE_TAG, APP_PORT, DB_PASSWORD
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: restaurante-${ENV_NAME:-local}-db
+    environment:
+      POSTGRES_USER: restaurante
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-restaurante_dev}
+      POSTGRES_DB: restaurante
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U restaurante"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    image: restaurante-api:${IMAGE_TAG:-local}
+    container_name: restaurante-${ENV_NAME:-local}-app
+    environment:
+      PORT: "3000"
+      ENV_NAME: ${ENV_NAME:-local}
+      DATABASE_URL: postgres://restaurante:${DB_PASSWORD:-restaurante_dev}@db:5432/restaurante
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - default
+      - cicd
+
+volumes:
+  dbdata:
+
+networks:
+  cicd:
+    name: cicd-net
+    external: true

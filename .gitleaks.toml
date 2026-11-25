@@ -1,0 +1,6 @@
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Carpetas generadas"
+paths = ['''node_modules''', '''e2e/node_modules''', '''coverage''', '''reports''', '''playwright-report''']

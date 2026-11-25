@@ -1,0 +1,2 @@
+{ "recommendations": ["ms-azuretools.vscode-docker", "dbaeumer.vscode-eslint", "ms-playwright.playwright",
+  "sonarsource.sonarlint-vscode", "eamodio.gitlens", "redhat.vscode-yaml", "janjoerke.jenkins-pipeline-linter-connector"] }

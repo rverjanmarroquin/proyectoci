@@ -1,0 +1,10 @@
+node_modules
+tests
+e2e
+coverage
+reports
+.git
+.vscode
+jenkins
+Jenkinsfile
+*.md

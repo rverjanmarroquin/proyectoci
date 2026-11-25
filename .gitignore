@@ -1,0 +1,8 @@
+node_modules/
+coverage/
+reports/
+e2e/node_modules/
+e2e/playwright-report/
+e2e/test-results/
+.scannerwork/
+.env
