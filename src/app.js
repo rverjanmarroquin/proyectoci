@@ -7,7 +7,16 @@ const { crearReserva, disponibilidad } = require('./reservasService');
 function createApp(repo, { ahora = () => new Date() } = {}) {
   const app = express();
   app.disable('x-powered-by');
-  app.use(helmet());
+  app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaultDirectives: true,
+      directives: {
+        "upgrade-insecure-requests": null,
+      },
+    },
+  })
+);
   app.use(express.json({ limit: '10kb' }));
   app.use(express.static(path.join(__dirname, '..', 'public')));
 
